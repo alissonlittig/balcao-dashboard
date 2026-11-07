@@ -28,11 +28,13 @@ export function serie(rs, de, ate, semanal) {
   const total = Math.floor(diasEntre(de, ate) / passo);
   const m = new Map();
   for (let i = 0; i < total; i++) m.set(add(de, i * passo), 0);
+  const t0 = Date.parse(de), chaves = [...m.keys()];
+  const v = new Array(total).fill(0);
   for (const r of rs) {
-    const k = add(de, Math.floor((diasEntre(de, r[0]) - 1) / passo) * passo);
-    if (m.has(k)) m.set(k, m.get(k) + r[3]);
+    const b = Math.floor((Date.parse(r[0]) - t0) / 864e5 / passo);
+    if (b >= 0 && b < total) v[b] += r[3];
   }
-  return [...m].map(([data, v]) => ({ data, v }));
+  return chaves.map((data, i) => ({ data, v: v[i] }));
 }
 
 export const diasEntre = (de, ate) => Math.round((new Date(ate) - new Date(de)) / 864e5) + 1;

@@ -59,3 +59,9 @@ footer{max-width:1240px;margin:0 auto;padding:18px clamp(14px,4vw,40px) 36px;col
 @media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.duas{grid-template-columns:1fr}.intervalo{margin-left:0;width:100%}}
 @media(max-width:520px){.kpis{gap:10px}.kpi,.cartao{padding:13px 14px}.aviso{display:none}.sel select{min-width:0;width:100%}.sel{flex:1 1 100%}.seg{width:100%}.seg button{flex:1;padding:9px 6px}}
 @media(prefers-reduced-motion:no-preference){.barra b i,.filial-barra rect{transition:width .4s,fill .2s}}
+/* reserva espaco antes dos dados chegarem (evita salto de layout) */
+.kpis{min-height:152px}
+#g-serie{min-height:300px}#g-filiais{min-height:244px}#g-calor{min-height:230px}
+.tabela-w{min-height:1300px}
+@media(max-width:900px){.kpis{min-height:324px}}
+@media(max-width:520px){#g-serie{min-height:230px}#g-filiais{min-height:244px}.kpis{min-height:310px}}
