@@ -35,7 +35,7 @@ function kpiCards(atual, ant, sAtual) {
     const svg = d3.select('#sp' + i);
     const w = svg.node().parentNode.clientWidth - 28 || 160;
     svg.attr('width', w);
-    const dados = i === 1 ? sAtual.t : sAtual.v;
+    const dados = sAtual[i];
     const x = d3.scaleLinear([0, dados.length - 1], [1, w - 1]);
     const y = d3.scaleLinear(d3.extent(dados), [27, 3]);
     const linha = d3.line().x((_, j) => x(j)).y((d) => y(d)).curve(d3.curveMonotoneX);
@@ -55,8 +55,10 @@ function grafSerie(sA, sB) {
   const y = d3.scaleLinear([ymin, ymax], [H - m.b, m.t]).nice();
   svg.append('g').selectAll('line').data(y.ticks(5)).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y).attr('stroke', '#e3dccd');
   svg.append('g').selectAll('text').data(y.ticks(5)).join('text').attr('x', m.l - 8).attr('y', (d) => y(d) + 4).attr('text-anchor', 'end').text((d) => (d >= 1000 ? d / 1000 + ' mil' : d));
-  const nt = Math.min(n, W < 500 ? 4 : n <= 13 ? 5 : 7);
-  const idx = d3.range(nt).map((i) => Math.round((i * (n - 1)) / (nt - 1)));
+  const alvo = W < 500 ? 4 : 7;
+  const passo = Math.max(1, Math.round((n - 1) / (alvo - 1)));
+  const idx = d3.range(0, n, passo);
+  const nt = idx.length;
   svg.append('g').selectAll('text').data(idx).join('text').attr('x', (i) => x(i)).attr('y', H - 6).attr('text-anchor', (i, k) => (k === 0 ? 'start' : k === nt - 1 ? 'end' : 'middle')).text((i) => dtf(sA[i].data));
   const ln = d3.line().x((_, i) => x(i)).y((d) => y(d.v)).curve(d3.curveMonotoneX);
   const area = d3.area().x((_, i) => x(i)).y0(H - m.b).y1((d) => y(d.v)).curve(d3.curveMonotoneX);
@@ -153,7 +155,10 @@ function render() {
   $('#intervalo').textContent = `${dtf(p.atual.de)} a ${dtf(p.atual.ate)} de ${p.atual.ate.slice(0, 4)} · ${diasEntre(p.atual.de, p.atual.ate)} dias`;
   const sd = serie(rA, p.atual.de, p.atual.ate, false).map((x) => x.v);
   const st = serie(rA.map((r) => [r[0], r[1], 0, r[2]]), p.atual.de, p.atual.ate, false).map((x) => x.v);
-  kpiCards(kpis(rA), kpis(rB), { v: sd, t: st });
+  const tm = sd.map((v, j) => (st[j] ? v / st[j] : 0));
+  // receita/dia: media movel de 7 dias (suaviza o ciclo semanal que a receita diaria tem)
+  const mm = sd.map((_, j) => d3.mean(sd.slice(Math.max(0, j - 6), j + 1)));
+  kpiCards(kpis(rA), kpis(rB), [d3.cumsum(sd), st, tm, mm]); // receita: acumulado no periodo
   grafSerie(sA, sB.slice(0, sA.length));
   // grafico de filiais sempre mostra a rede toda (filial escolhida fica em destaque)
   grafFiliais(porFilial(filtrar(D.rows, p.atual, vmap), D.filiais, vmap));

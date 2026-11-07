@@ -33,6 +33,7 @@ const sazon = (d) => {
   if (m === 11 && dd <= 24) k += 0.5;
   return k;
 };
+const fi0 = (v) => filiais.findIndex((x) => x.id === v.f);
 const rows = [];
 for (let i = DIAS - 1; i >= 0; i--) {
   const d = new Date(fim.getTime() - i * 864e5);
@@ -42,10 +43,13 @@ for (let i = DIAS - 1; i >= 0; i--) {
     const f = filiais.find((x) => x.id === v.f);
     if (d.getUTCDay() === 0 && rnd() < 0.55) continue;
     if (rnd() < 0.06) continue;
-    const base = 3.2 * f.porte * v.skill * dow[d.getUTCDay()] * sazon(d) * tend;
+    // ritmo proprio de cada filial (ciclos de ~2 a 4 meses) para as filiais nao andarem juntas
+    const fi = filiais.indexOf(f);
+    const ritmo = 1 + 0.16 * Math.sin((DIAS - i) / (38 + fi * 11) + fi * 1.7);
+    const base = 3.2 * ritmo * f.porte * v.skill * dow[d.getUTCDay()] * sazon(d) * tend;
     const t = Math.max(0, Math.round(base + gauss() * 1.2));
     if (!t) continue;
-    const ticket = (190 + 70 * v.skill) * (1 + 0.06 * gauss());
+    const ticket = (190 + 70 * v.skill) * (1 + 0.07 * Math.sin((DIAS - i) / 55 + fi0(v)) + 0.05 * gauss());
     rows.push([iso, v.id, t, Math.round(t * ticket)]);
   }
 }

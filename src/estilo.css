@@ -62,7 +62,7 @@ footer{max-width:1240px;margin:0 auto;padding:18px clamp(14px,4vw,40px) 36px;col
 /* reserva espaco antes dos dados chegarem (evita salto de layout) */
 .kpis{min-height:152px}
 #g-serie{min-height:300px}#g-filiais{min-height:244px}#g-calor{min-height:230px}
-.tabela-w{min-height:1300px}
+
 @media(max-width:900px){.kpis{min-height:324px}}
 @media(max-width:520px){#g-serie{min-height:230px}#g-filiais{min-height:244px}.kpis{min-height:310px}}
 @media(max-width:520px){#tab th:nth-child(3),#tab td:nth-child(3),#tab th:nth-child(5),#tab td:nth-child(5),#tab th:nth-child(6),#tab td:nth-child(6){display:none}.barra{min-width:110px}#g-calor{min-height:0}}
