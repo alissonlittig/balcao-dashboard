@@ -84,7 +84,7 @@ function grafSerie(sA, sB) {
 
 function grafFiliais(fil) {
   const el = $('#g-filiais');
-  const W = medir(el), rh = 40, H = fil.length * rh + 4, lw = W < 420 ? 96 : 128;
+  const W = medir(el), rh = 40, H = fil.length * rh + 4, lw = W < 420 ? 118 : 128;
   el.innerHTML = '';
   const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
   const x = d3.scaleLinear([0, d3.max(fil, (d) => d.receita)], [0, W - lw - 70]);
